@@ -1,0 +1,23 @@
+.circle {
+    border-radius: 50%;
+    position: absolute;
+}
+
+.line {
+    transform-origin: 0% 0%;
+    position: absolute;
+}
+
+.button {
+    position: fixed;
+}
+
+.chat_window {
+    height: 135px;
+    width: 420px;
+    border: 1px solid #ccc;
+    position: fixed;
+    font: 16px/26px Georgia, Garamond, Serif;
+    overflow: auto;
+    white-space: pre-wrap;
+}
