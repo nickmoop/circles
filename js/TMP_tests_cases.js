@@ -21,7 +21,7 @@ function test_create_session() {
         if (res.status != 200) {
             return res.text().then(
                 function(res) {
-                    console.log('Session creation error: ' + res);
+                    alert('Session creation error: ' + res);
                 }, func_creation_error
             );
         }
@@ -42,7 +42,7 @@ function test_squad_creation() {
 
 function test_units_kill() {
     if (!SOCKET_BATTLE) {
-        console.log('have no socket battle');
+        alert('have no socket battle');
         return;
     }
 

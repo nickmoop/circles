@@ -4,7 +4,6 @@ package squads
 
 import (
     "math"
-    "log"
 
     "backend/units"
     "backend/utils"
@@ -249,7 +248,6 @@ func (squad *Squad) TMPReshapeFormation() bool {
 
         for line := old_lines - 1; line >= 0; line-- {
             for column := 0; column < old_columns; column++ {
-                log.Println(line, column)
                 unit := squad.Formation[line][column]
                 if (unit == nil) {
                     continue
@@ -314,17 +312,22 @@ func (squad *Squad) RotateSquad() bool {
 	current_direction := utils.NormalizeDirectionAngle(squad.Direction)
 
     delta := direction_destination - current_direction
-    step := 0.0
 
     if (delta == 0) {
         return false
-    } else if (math.Abs(delta) <= squad.DirectionUnit) {
+    }
+
+    if (math.Abs(delta) <= squad.DirectionUnit || 360 - math.Abs(delta) <= squad.DirectionUnit) {
         squad.Direction = squad.RotateTo
         squad.InitTMPFormation()
         squad.RotateTMPFormation(squad.Direction)
         squad.TMPUnitsMoveToTMPFormation()
+
         return true
-    } else if (delta < -180 || delta > 0 && delta <= 180) {
+    }
+
+    step := 0.0
+    if (delta < -180 || delta > 0 && delta <= 180) {
         step = squad.DirectionUnit
     } else if (delta > 180 || delta < 0 && delta >= -180) {
         step = -squad.DirectionUnit
@@ -332,7 +335,6 @@ func (squad *Squad) RotateSquad() bool {
 
     squad.RotateTMPFormation(step)
     squad.Direction += step
-
     squad.TMPUnitsMoveToTMPFormation()
 
     return true
@@ -341,6 +343,7 @@ func (squad *Squad) RotateSquad() bool {
 
 func (squad *Squad) KillUnit(dead_unit *units.DeadUnit) {
     delete(squad.Units, dead_unit.Id)
+    delete(squad.UnitsToMove, dead_unit.Id)
     squad.Formation[dead_unit.Line][dead_unit.Column] = nil
 }
 
@@ -590,6 +593,11 @@ func (squad *Squad) RemoveLastLines() int {
 func (squad *Squad) MoveUnits() []*units.Unit {
     moved_units := make([]*units.Unit, 0)
     for unit_id, _ := range squad.UnitsToMove {
+        if (squad.Units[unit_id] == nil) {
+            delete(squad.UnitsToMove, unit_id)
+            continue
+        }
+
         moved_units = append(moved_units, squad.Units[unit_id])
 
         if (squad.Units[unit_id].Move()) {

@@ -96,17 +96,18 @@ function create_new_session() {
     };
 
     let func_creation_error = function(err) {
-        console.log('Something wrong with session creation: ' + err);
+        alert('Something wrong with session creation: ' + err);
     }
     let func_created = function(res) {
         console.log('Session with id: ' + res.SessionId + '. For user: ' + res.UserName + '. Was created.');
+        USER_NAME = res.UserName;
         join_ws_session(res.SessionId, res.UserName);
     }
     let func_create_session = function(res) {
         if (res.status != 200) {
             return res.text().then(
                 function(res) {
-                    console.log('Session creation error: ' + res);
+                    alert('Session creation error: ' + res);
                 }, func_creation_error
             );
         }
@@ -135,7 +136,7 @@ function close_connection() {
 
 function send_chat_message() {
     if (!SOCKET_CHAT) {
-        console.log('have no socket chat');
+        alert('have no socket chat');
         return;
     }
 
@@ -147,7 +148,7 @@ function send_chat_message() {
 
 function clock_start() {
     if (!SOCKET_BATTLE) {
-        console.log('have no socket battle');
+        alert('have no socket battle');
         return;
     }
 
@@ -163,7 +164,7 @@ function clock_start() {
 
 function clock_stop() {
     if (!SOCKET_BATTLE) {
-        console.log('have no socket battle');
+        alert('have no socket battle');
         return;
     }
 
@@ -178,5 +179,5 @@ function clock_stop() {
 
 
 function dummyButtonClick() {
-    console.log('button clicked');
+    alert('button clicked');
 };

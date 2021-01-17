@@ -62,7 +62,6 @@ func battleWSSessionJoin(writer http.ResponseWriter, request *http.Request) {
 		    break
 		}
 
-        log.Println("battle message:", message)
         response := battle.ExecuteBattleCommand(user_name, session_id, message)
         sessions.TMPSendBattleMessageToAllInSession(session_id, user_name, response)
 	}
@@ -72,20 +71,19 @@ func battleWSSessionJoin(writer http.ResponseWriter, request *http.Request) {
 func battleHandler(writer http.ResponseWriter, request *http.Request) {
     connection, err := upgrader.Upgrade(writer, request, nil)
 	if err != nil {
-		log.Println("upgrade:", err)
+		log.Println("upgrade error:", err)
 		return
 	}
 	defer connection.Close()
 	for {
 		message_type, message, err := connection.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.Println("read error:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
 		err = connection.WriteMessage(message_type, message)
 		if err != nil {
-			log.Println("write:", err)
+			log.Println("write error:", err)
 			break
 		}
 	}
@@ -95,20 +93,19 @@ func battleHandler(writer http.ResponseWriter, request *http.Request) {
 func echo(writer http.ResponseWriter, request *http.Request) {
 	connection, err := upgrader.Upgrade(writer, request, nil)
 	if err != nil {
-		log.Print("upgrade:", err)
+		log.Print("upgrade error:", err)
 		return
 	}
 	defer connection.Close()
 	for {
 		message_type, message, err := connection.ReadMessage()
 		if err != nil {
-			log.Println("read:", err)
+			log.Println("read error:", err)
 			break
 		}
-		log.Printf("recv: %s", message)
 		err = connection.WriteMessage(message_type, message)
 		if err != nil {
-			log.Println("write:", err)
+			log.Println("write error:", err)
 			break
 		}
 	}

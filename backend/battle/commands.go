@@ -29,6 +29,7 @@ type BattleCommand struct {
 
 
 func (battle_command *BattleCommand) executeCommand() []byte {
+    log.Println("[recv command]", battle_command.Command, "in session:", battle_command.SessionId, "from user:", battle_command.UserName, "with parameters: ", battle_command.Parameters)
     command := COMMANDS_MAP[battle_command.Command]
     response := command(battle_command.Parameters, battle_command.UserName, battle_command.SessionId)
 
@@ -39,16 +40,19 @@ func (battle_command *BattleCommand) executeCommand() []byte {
 func commandMoveSquad(parameters map[string]interface{}, user_name string, session_id string) []byte {
     session := sessions.GetCoreSessionById(session_id)
     name := parameters["Name"].(string)
-    direction := parameters["Direction"].(float64)
-    columns := int(parameters["Columns"].(float64))
-    to_x := parameters["ToX"].(float64)
-    to_y := parameters["ToY"].(float64)
-
     squad := session.Squads[name]
-    squad.ReshapeTo = columns
-    squad.RotateTo = direction
-    squad.ToX = to_x
-    squad.ToY = to_y
+
+    if (squad.TMPOwnerName != user_name) {
+        response := "move_squad"
+        response_message := "Squad '" + name + "' is not your squad"
+
+        return JsonMoveSquadResponse(response, response_message)
+    }
+
+    squad.RotateTo = parameters["Direction"].(float64)
+    squad.ReshapeTo = int(parameters["Columns"].(float64))
+    squad.ToX = parameters["ToX"].(float64)
+    squad.ToY = parameters["ToY"].(float64)
 
     response := "move_squad"
     response_message := "Squad '" + name + "' start moving"
@@ -89,9 +93,7 @@ func commandClock(parameters map[string]interface{}, user_name string, session_i
     clock_state := parameters["State"].(string)
     response := "clock"
 
-    log.Println("new clock state:", clock_state)
     session.ClockState = clock_state
-    log.Println("session clock state:", session.ClockState)
 
     if session.ClockState == "start" {
         session.TMPStartTicking()
@@ -110,13 +112,13 @@ func commandClock(parameters map[string]interface{}, user_name string, session_i
 func commandKillUnits(parameters map[string]interface{}, user_name string, session_id string) []byte {
     session := sessions.GetCoreSessionById(session_id)
 
-    for _, squad := range session.Squads {
-        go func() {
-            previous_tick := -1
-            for {
-                time.Sleep(1 * time.Second)
-                ticks_delay := session.TickCount - previous_tick
-                if (ticks_delay >= 10) {
+    go func() {
+        previous_tick := -1
+        for {
+            time.Sleep(1 * time.Second)
+            ticks_delay := session.TickCount - previous_tick
+            if (ticks_delay >= 10) {
+                for _, squad := range session.Squads {
                     line_to_kill := rand.Intn(squad.Lines)
                     column_to_kill := rand.Intn(squad.Columns)
 
@@ -134,8 +136,8 @@ func commandKillUnits(parameters map[string]interface{}, user_name string, sessi
                     }
                 }
             }
-        }()
-    }
+        }
+    }()
 
     response := "test_kill_units"
     response_message := "Units kills starts"

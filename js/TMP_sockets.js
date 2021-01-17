@@ -14,8 +14,7 @@ class TMPSocket {
     }
 
     send(data) {
-        console.log('data send:' + data);
-        console.log('socket:' + this);
+        console.log('[send]:' + data);
         this.socket.send(data)
     }
 
@@ -45,16 +44,15 @@ function on_message(event) {
 
 
 function on_chat_message(event) {
-    console.log('[message] Data recv: ' + event.data);
     income_chat_data = JSON.parse(event.data);
     MY_INTERFACE.chat_window.add_text(income_chat_data.UserName + ": " + income_chat_data.Message);
 }
 
 
 function on_battle_message(event) {
-    console.log('[message] Data recv: ' + event.data);
     income_battle_data = JSON.parse(event.data);
-    response = income_battle_data["Response"];
+    console.log('[recv battle]: ' + income_battle_data['Response']);
+    response = income_battle_data['Response'];
     battle_function = BATTLE_FUNCTIONS.get(response)
     battle_function(income_battle_data);
 }

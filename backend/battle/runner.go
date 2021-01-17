@@ -3,14 +3,11 @@ package battle
 
 import (
 	"encoding/json"
-    "log"
 )
 
 
 func ExecuteBattleCommand(user_name string, session_id string, message string) []byte {
     battle_command := ParseBattleMessage(user_name, session_id, message)
-    log.Println(battle_command)
-
     response := battle_command.executeCommand()
 
     return response

@@ -76,10 +76,18 @@ function tmp_change_squad_direction_response(response_json) {
     squad._lines = response_json['Lines'];
     squad.TMP_draw_shape();
 
+    if (USER_NAME != squad.TMPOwnerName) {
+        return;
+    };
+
+    if (shade_squad.is_hidden) {
+        return;
+    };
+
     if (squad.x == shade_squad.x && squad.y == shade_squad.y) {
         shade_squad.hide();
         move_squad_to(shade_squad.name, shade_squad.direction, shade_squad.columns, shade_squad.x, shade_squad.y);
-    }
+    };
 }
 
 
@@ -99,8 +107,16 @@ function tmp_correct_formation_response(response_json) {
     squad._TMP_init_formation(response_json);
     squad.TMP_draw_shape();
 
+    if (USER_NAME != squad.TMPOwnerName) {
+        return;
+    };
+
+    if (shade_squad.is_hidden) {
+        return;
+    };
+
     if (squad.x == shade_squad.x && squad.y == shade_squad.y) {
         shade_squad.hide();
         move_squad_to(shade_squad.name, shade_squad.direction, shade_squad.columns, shade_squad.x, shade_squad.y);
-    }
+    };
 }

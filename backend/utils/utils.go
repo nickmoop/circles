@@ -6,10 +6,10 @@ import (
 )
 
 
-var TICKS_PER_SECOND int = 2
-var CELL_SIZE int = 10
+var TICKS_PER_SECOND int = 10
+var CELL_SIZE int = 50
 var CELLS_PER_SECOND int = 1
-var ATTACK_RANGE int = 5
+var ATTACK_RANGE int = 15
 var MS_PER_TICK time.Duration = time.Duration(1000 / TICKS_PER_SECOND) * time.Millisecond
 var UNIT_VECTOR_MODIFIER float64 = float64(CELLS_PER_SECOND * CELL_SIZE / TICKS_PER_SECOND)
 

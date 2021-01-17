@@ -1,6 +1,6 @@
 function create_squad(name, size, color, unit_size, units_interval) {
     if (!SOCKET_BATTLE) {
-        console.log('have no socket battle');
+        alert('have no socket battle');
         return;
     }
 
@@ -20,7 +20,7 @@ function create_squad(name, size, color, unit_size, units_interval) {
 
 function move_squad_to(name, direction, columns, x, y) {
     if (!SOCKET_BATTLE) {
-        console.log('have no socket battle');
+        alert('have no socket battle');
         return;
     }
 

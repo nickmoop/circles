@@ -13,7 +13,9 @@ class BaseSquad {
         this.width = obj.Width;
         this.height = obj.Height;
         this.direction = obj.Direction;
+        this.TMPOwnerName = obj.TMPOwnerName;
         this.is_select = false;
+        this.is_hidden = true;
 
         this._link_squad_to_circles();
         this._init_direction();
@@ -176,6 +178,7 @@ class BaseSquad {
         this.top_right_circle.hide();
         this.bottom_left.hide();
         this._direction_line.hide();
+        this.is_hidden = true;
     }
 
     unhide() {
@@ -189,6 +192,7 @@ class BaseSquad {
         this.top_right_circle.unhide();
         this.bottom_left.unhide();
         this._direction_line.unhide();
+        this.is_hidden = false;
     }
 
     get columns() {

@@ -236,8 +236,6 @@ func (session *CoreSession) KillUnits() {
 
 
 func (session *CoreSession) TMPStartTicking() {
-    log.Println("start ticking. session id:", session.SessionId)
-
     go func() {
         for {
             select {
@@ -252,13 +250,11 @@ func (session *CoreSession) TMPStartTicking() {
 
 
 func (session *CoreSession) TMPStopTicking() {
-    log.Println("stop ticking. session id:", session.SessionId)
     session.TickChannel <- true
 }
 
 
 func (session *CoreSession) TMPTick() {
-    // move units if exists some units to move
     for _, squad := range session.Squads {
         session.ProcessSquadActivity(squad)
     }
@@ -266,7 +262,6 @@ func (session *CoreSession) TMPTick() {
     session.KillUnits()
 
     session.TickCount++
-    log.Println("session id:", session.SessionId, "tick count:", session.TickCount)
 }
 
 

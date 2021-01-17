@@ -4,6 +4,7 @@ package connections
 import (
 	"log"
 	"net/http"
+    "sync"
 
     "github.com/gorilla/websocket"
 )
@@ -16,6 +17,7 @@ type WSConnection struct {
     SessionId string
     UserName string
     Connection *websocket.Conn
+    Mutex sync.Mutex
 }
 
 
@@ -38,7 +40,6 @@ func (connection *WSConnection) ReadMessage() ([]byte, error) {
     if err != nil {
         log.Println("read error:", err)
     }
-    log.Println("recv:", string(message), "session id:", connection.SessionId, "user name:", connection.UserName)
 
     return message, err
 }
@@ -52,11 +53,12 @@ func (connection *WSConnection) ReadMessageAsString() (string, error) {
 
 
 func (connection *WSConnection) WriteMessage(message []byte) {
+    connection.Mutex.Lock()
+    defer connection.Mutex.Unlock()
     err := connection.Connection.WriteMessage(1, message)
     if err != nil {
         log.Println("write error:", err)
     }
-    log.Println("send:", string(message), "session id:", connection.SessionId, "user name:", connection.UserName)
 }
 
 

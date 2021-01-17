@@ -25,13 +25,18 @@ class Body {
             let scaled_coordinates = this.scale_field_coordinates(x_unscaled, y_unscaled);
             let x = scaled_coordinates[0];
             let y = scaled_coordinates[1];
-            let init_length = ((SELECTED_SHADE_SQUAD.x - this.move_start_x) ** 2 + (SELECTED_SHADE_SQUAD.y - this.move_start_y) ** 2) ** 0.5;
-            let now_length = ((SELECTED_SHADE_SQUAD.x - x) ** 2 + (SELECTED_SHADE_SQUAD.y - y) ** 2) ** 0.5;
+            let length = ((SELECTED_SHADE_SQUAD.x - x) ** 2 + (SELECTED_SHADE_SQUAD.y - y) ** 2) ** 0.5;
             let norm_x = x - SELECTED_SHADE_SQUAD.x;
             let norm_y = y - SELECTED_SHADE_SQUAD.y;
-            let direction_cos = (0 * norm_x - 1 * norm_y) / (1 * now_length);
+            let direction_cos = (0 * norm_x - 1 * norm_y) / (1 * length);
             let direction_degree = Math.sign(norm_x) * to_degree(Math.acos(direction_cos));
-            let length_ratio = Math.ceil((init_length - now_length)/10*this.zoom_level);
+            let step = 10 / this.zoom_level;
+            let length_ratio = 0;
+
+            if (length > 80) {
+                length_ratio = Math.ceil((140 - length)/step);
+            }
+
             let new_columns = this.TMP_old_columns + length_ratio
 
             SELECTED_SHADE_SQUAD.columns = new_columns;
@@ -78,6 +83,17 @@ class Body {
             return;
         };
 
+        if (USER_NAME != squad.TMPOwnerName) {
+            if (SELECTED_SQUAD) {
+                SELECTED_SQUAD.TMP_unselect();
+            };
+            if (SELECTED_SHADE_SQUAD) {
+                SELECTED_SHADE_SQUAD.TMP_unselect();
+            };
+
+            return;
+        };
+
         if (squad.is_select === false) {
             squad.TMP_select();
             shade_squad.TMP_select();
@@ -89,12 +105,10 @@ class Body {
 
     zoom_in() {
         this.zoom_level = this.zoom_level + 0.2;
-        console.log('zoom level: ' + this.zoom_level);
     }
 
     zoom_out() {
         this.zoom_level = this.zoom_level - 0.2;
-        console.log('zoom level: ' + this.zoom_level);
     }
 
     get zoom_level() {
@@ -128,13 +142,8 @@ class Body {
 
 function mousedown_handler() {
     if (event.target.className === 'button') {
-        console.log('Button pressed: ' + event.target.id);
         return;
     }
-
-    console.log('mouse button ' + event.which + ' down');
-    console.log('start coords: x ' + event.pageX + ' y ' + event.pageY);
-    console.log('mousedown target: ' + event.target);
 
     MY_BODY.move_start_x = event.pageX;
     MY_BODY.move_start_y = event.pageY;
@@ -153,10 +162,6 @@ function mouseup_handler() {
     if (event.target.className === 'button') {
         return;
     }
-
-    console.log('mouse button ' + event.which + ' up');
-    console.log('end coords: x ' + event.pageX + ' y ' + event.pageY);
-    console.log('mouseup target: ' + event.target);
 
     MY_BODY.move_end_x = event.pageX;
     MY_BODY.move_end_y = event.pageY;
